@@ -1,42 +1,40 @@
-# Voice Translator
+# GlobeSpeak — Online Voice Translator Website
 
-A simple web app that lets you type text in English, translate it into another language, hear the translation read aloud, and see a map of the region where that language is spoken.
+A static website you open in any browser. Type text in English, choose a language, hear the translation spoken aloud, and view an interactive map of where that language is spoken.
 
-## Features
+## What's on the site
 
-- **Text input** — Type or paste any sentence to translate
-- **Language picker** — Choose from 20 languages
-- **Translation** — Powered by the free MyMemory Translation API
-- **Read aloud** — Uses your browser’s built-in text-to-speech (Web Speech API)
-- **Synced map** — Leaflet map updates when you change language or translate, centered on the country associated with that language
+- **Home hero** — Introduction and link to the translator
+- **Translator** — Text input, language selector, and read-aloud playback
+- **Language map** — Updates when you change language or translate
+- **How it works** — Quick overview for visitors
 
-## Run locally
+## View the website locally
 
-Because the app loads map tiles and calls a translation API, you need a local server (opening `index.html` directly may block fetch requests).
+The site loads map tiles and calls a translation API, so use a simple local web server rather than opening the HTML file directly:
 
 ```bash
-# From the project folder
+cd "/Users/grace/Desktop/Vibe Code/Translation-Project"
 python3 -m http.server 8080
 ```
 
-Then open [http://localhost:8080](http://localhost:8080) in your browser.
+Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-Or with Node:
+## Publish online
 
-```bash
-npx serve .
-```
+This is a plain static site — upload the project folder to any static host:
 
-## Usage
+- [GitHub Pages](https://pages.github.com/)
+- [Netlify](https://www.netlify.com/)
+- [Vercel](https://vercel.com/)
 
-1. Enter text in the text area (English source).
-2. Select a target language from the dropdown — the map moves immediately.
-3. Click **Translate** (or press Cmd/Ctrl + Enter).
-4. The translation appears and is read aloud automatically.
-5. Use **Read aloud** to hear it again, or **Stop** to cancel speech.
+No build step required. Deploy `index.html`, `css/`, and `js/` as-is.
 
-## Notes
+## Files
 
-- Translation quality depends on the MyMemory API (free tier, rate limits may apply).
-- Text-to-speech voices vary by browser and operating system; some languages may use a fallback voice.
-- The map shows a representative country for each language (e.g. Spanish → Spain, Japanese → Japan).
+| File | Purpose |
+|------|---------|
+| `index.html` | Website pages and structure |
+| `css/styles.css` | Layout and styling |
+| `js/languages.js` | Language list and map coordinates |
+| `js/main.js` | Translation, speech, and map logic |

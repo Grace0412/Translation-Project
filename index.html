@@ -3,66 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice Translator</title>
+  <meta name="description" content="Free online translator — type text, choose a language, hear the translation spoken aloud, and explore where that language is spoken on an interactive map." />
+  <title>GlobeSpeak — Free Online Voice Translator</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <div class="app">
-    <header class="header">
-      <h1>Voice Translator</h1>
-      <p class="subtitle">Type text, pick a language, hear it spoken — with a map of where it's spoken.</p>
-    </header>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main">
+      <a class="logo" href="#">GlobeSpeak</a>
+      <ul class="nav-links">
+        <li><a href="#translate">Translate</a></li>
+        <li><a href="#map-section">Map</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <main class="main">
-      <section class="panel translate-panel">
-        <label class="label" for="source-text">What would you like to translate?</label>
-        <textarea
-          id="source-text"
-          class="textarea"
-          rows="4"
-          placeholder="Type or paste your sentence here…"
-        ></textarea>
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Free online translator</p>
+      <h1>Translate, listen, and explore the world</h1>
+      <p class="hero-lead">
+        Type any sentence in English, choose a language, and hear it spoken aloud —
+        with a live map showing where that language is spoken.
+      </p>
+      <a class="btn btn-primary btn-lg" href="#translate">Start translating</a>
+    </div>
+  </section>
 
-        <div class="controls">
-          <div class="field">
-            <label class="label" for="target-lang">Translate to</label>
-            <select id="target-lang" class="select"></select>
+  <main class="site-main">
+    <section id="translate" class="section translator-section">
+      <div class="section-head">
+        <h2>Translator</h2>
+        <p>Enter your text below and pick a target language.</p>
+      </div>
+
+      <div class="translator-grid">
+        <article class="card">
+          <label class="label" for="source-text">Your text (English)</label>
+          <textarea
+            id="source-text"
+            class="textarea"
+            rows="5"
+            placeholder="Type or paste your sentence here…"
+          ></textarea>
+
+          <div class="controls">
+            <div class="field">
+              <label class="label" for="target-lang">Translate into</label>
+              <select id="target-lang" class="select"></select>
+            </div>
+
+            <button id="translate-btn" type="button" class="btn btn-primary">
+              Translate
+            </button>
           </div>
 
-          <button id="translate-btn" type="button" class="btn btn-primary">
-            Translate
-          </button>
-        </div>
+          <div id="status" class="status" aria-live="polite"></div>
 
-        <div id="status" class="status" aria-live="polite"></div>
-
-        <div id="result-block" class="result-block" hidden>
-          <label class="label">Translation</label>
-          <p id="translated-text" class="translated-text"></p>
-          <div class="result-actions">
-            <button id="speak-btn" type="button" class="btn btn-secondary">
-              <span aria-hidden="true">🔊</span> Read aloud
-            </button>
-            <button id="stop-speak-btn" type="button" class="btn btn-ghost" hidden>
-              Stop
-            </button>
+          <div id="result-block" class="result-block" hidden>
+            <label class="label">Translation</label>
+            <p id="translated-text" class="translated-text"></p>
+            <div class="result-actions">
+              <button id="speak-btn" type="button" class="btn btn-secondary">
+                Listen again
+              </button>
+              <button id="stop-speak-btn" type="button" class="btn btn-ghost" hidden>
+                Stop audio
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </article>
 
-      <section class="panel map-panel">
-        <div class="map-header">
-          <h2 id="map-title">Map</h2>
-          <p id="map-subtitle" class="map-subtitle">Select a language to see where it's spoken.</p>
-        </div>
-        <div id="map" class="map" role="img" aria-label="Map of the selected language region"></div>
-      </section>
-    </main>
-  </div>
+        <article id="map-section" class="card map-card">
+          <div class="map-header">
+            <h3 id="map-title">Language map</h3>
+            <p id="map-subtitle" class="map-subtitle">
+              Choose a language to see where it is spoken around the world.
+            </p>
+          </div>
+          <div id="map" class="map" role="img" aria-label="Map of the selected language region"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section features-section">
+      <div class="section-head">
+        <h2>How it works</h2>
+        <p>Three simple steps — no download or sign-up required.</p>
+      </div>
+      <ul class="features">
+        <li class="feature">
+          <span class="feature-num">1</span>
+          <h3>Type your sentence</h3>
+          <p>Write or paste any phrase you want translated from English.</p>
+        </li>
+        <li class="feature">
+          <span class="feature-num">2</span>
+          <h3>Choose a language</h3>
+          <p>Pick from 20 languages. The map updates to show that region.</p>
+        </li>
+        <li class="feature">
+          <span class="feature-num">3</span>
+          <h3>Hear it spoken</h3>
+          <p>Your translation is read aloud automatically in the target language.</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> GlobeSpeak. Free to use in your browser.</p>
+    <p class="footer-note">Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+  </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/languages.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

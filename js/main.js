@@ -8,11 +8,16 @@ const speakBtn = document.getElementById("speak-btn");
 const stopSpeakBtn = document.getElementById("stop-speak-btn");
 const mapTitle = document.getElementById("map-title");
 const mapSubtitle = document.getElementById("map-subtitle");
+const yearEl = document.getElementById("year");
 
 let map;
 let marker;
 let currentTranslation = "";
 let currentLanguage = getLanguageByCode("es");
+
+if (yearEl) {
+  yearEl.textContent = new Date().getFullYear();
+}
 
 function populateLanguageSelect() {
   LANGUAGES.forEach((lang) => {
@@ -48,7 +53,7 @@ function syncMapToLanguage(lang) {
   currentLanguage = lang;
 
   mapTitle.textContent = `${lang.name} — ${lang.country}`;
-  mapSubtitle.textContent = `Map centered on ${lang.country}, where ${lang.name} is widely spoken.`;
+  mapSubtitle.textContent = `Showing ${lang.country}, where ${lang.name} is widely spoken.`;
 
   const center = [lang.lat, lang.lng];
 
@@ -138,7 +143,7 @@ async function handleTranslate() {
 
     translatedText.textContent = result;
     resultBlock.hidden = false;
-    setStatus(`Translated to ${lang.name}.`, "success");
+    setStatus(`Translated to ${lang.name}. Playing audio…`, "success");
 
     speakTranslation(result, lang);
   } catch (err) {
