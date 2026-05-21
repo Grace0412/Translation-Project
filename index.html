@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Free online translator — type text, choose a language, hear the translation spoken aloud, and explore where that language is spoken on an interactive map." />
+  <meta name="description" content="Free online translator — type or record your voice in English, choose a language, hear the translation spoken aloud, and explore where that language is spoken on an interactive map." />
   <title>GlobeSpeak — Free Online Voice Translator</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css" />
@@ -25,7 +25,7 @@
       <p class="hero-eyebrow">Free online translator</p>
       <h1>Translate, listen, and explore the world</h1>
       <p class="hero-lead">
-        Type any sentence in English, choose a language, and hear it spoken aloud —
+        Type or record a sentence in English, choose a language, and hear it spoken aloud —
         with a live map showing where that language is spoken.
       </p>
       <a class="btn btn-primary btn-lg" href="#translate">Start translating</a>
@@ -36,7 +36,7 @@
     <section id="translate" class="section translator-section">
       <div class="section-head">
         <h2>Translator</h2>
-        <p>Enter your text below and pick a target language.</p>
+        <p>Type or record your text below and pick a target language.</p>
       </div>
 
       <div class="translator-grid">
@@ -48,6 +48,29 @@
             rows="5"
             placeholder="Type or paste your sentence here…"
           ></textarea>
+
+          <div class="voice-input" aria-label="Voice input">
+            <p class="voice-label">Or speak in English</p>
+            <div class="voice-controls">
+              <button
+                id="record-btn"
+                type="button"
+                class="btn btn-record"
+                aria-pressed="false"
+                aria-describedby="record-hint"
+              >
+                <span class="record-icon" aria-hidden="true"></span>
+                <span id="record-btn-label">Record</span>
+              </button>
+              <button id="send-voice-btn" type="button" class="btn btn-primary" hidden>
+                Translate recording
+              </button>
+            </div>
+            <p id="record-hint" class="voice-hint">
+              Press Record, say your sentence, then press Stop. Review the text, then translate.
+            </p>
+            <p id="voice-preview" class="voice-preview" hidden aria-live="polite"></p>
+          </div>
 
           <div class="controls">
             <div class="field">
@@ -96,8 +119,8 @@
       <ul class="features">
         <li class="feature">
           <span class="feature-num">1</span>
-          <h3>Type your sentence</h3>
-          <p>Write or paste any phrase you want translated from English.</p>
+          <h3>Type or record</h3>
+          <p>Write, paste, or record yourself speaking a phrase in English.</p>
         </li>
         <li class="feature">
           <span class="feature-num">2</span>

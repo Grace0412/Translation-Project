@@ -1,11 +1,11 @@
 # GlobeSpeak — Online Voice Translator Website
 
-A static website you open in any browser. Type text in English, choose a language, hear the translation spoken aloud, and view an interactive map of where that language is spoken.
+A static website you open in any browser. Type or record text in English, choose a language, hear the translation spoken aloud, and view an interactive map of where that language is spoken.
 
 ## What's on the site
 
 - **Home hero** — Introduction and link to the translator
-- **Translator** — Text input, language selector, and read-aloud playback
+- **Translator** — Text input, voice recording, language selector, and read-aloud playback
 - **Language map** — Updates when you change language or translate
 - **How it works** — Quick overview for visitors
 
