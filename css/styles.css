@@ -223,6 +223,18 @@ a:hover {
   border-color: var(--accent);
 }
 
+.char-count {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.char-count.char-count-over {
+  color: var(--error);
+  font-weight: 600;
+}
+
 .voice-input {
   margin-top: 1.25rem;
   padding: 1rem;

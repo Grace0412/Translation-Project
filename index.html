@@ -47,7 +47,9 @@
             class="textarea"
             rows="5"
             placeholder="Type or paste your sentence here…"
+            aria-describedby="char-count"
           ></textarea>
+          <p id="char-count" class="char-count" aria-live="polite">0 / 50,000</p>
 
           <div class="voice-input" aria-label="Voice input">
             <p class="voice-label">Or speak in English</p>
@@ -150,6 +152,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/languages.js"></script>
+  <script src="js/translate.js"></script>
   <script src="js/voice.js"></script>
   <script src="js/main.js"></script>
 </body>

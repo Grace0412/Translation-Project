@@ -15,6 +15,7 @@ const micLevelBar = document.getElementById("mic-level-bar");
 const mapTitle = document.getElementById("map-title");
 const mapSubtitle = document.getElementById("map-subtitle");
 const yearEl = document.getElementById("year");
+const charCountEl = document.getElementById("char-count");
 
 let map;
 let marker;
@@ -74,23 +75,13 @@ function syncMapToLanguage(lang) {
   map.setView(center, lang.zoom, { animate: true });
 }
 
-async function translateText(text, targetCode) {
-  const encoded = encodeURIComponent(text.trim());
-  const url = `https://api.mymemory.translated.net/get?q=${encoded}&langpair=en|${targetCode}`;
+function updateCharCount() {
+  if (!charCountEl || !sourceText) return;
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Translation service unavailable. Try again in a moment.");
-  }
-
-  const data = await response.json();
-  if (data.responseStatus !== 200 || !data.responseData?.translatedText) {
-    throw new Error(
-      data.responseDetails || "Could not translate that text. Please try again."
-    );
-  }
-
-  return data.responseData.translatedText;
+  const length = sourceText.value.length;
+  const max = Translation.MAX_QUERY_CHARS;
+  charCountEl.textContent = `${length.toLocaleString()} / ${max.toLocaleString()}`;
+  charCountEl.classList.toggle("char-count-over", length > max);
 }
 
 function speakTranslation(text, lang) {
@@ -148,6 +139,15 @@ async function handleTranslate() {
     return;
   }
 
+  if (text.length > Translation.MAX_QUERY_CHARS) {
+    setStatus(
+      `Text is too long. Maximum is ${Translation.MAX_QUERY_CHARS.toLocaleString()} characters.`,
+      "error"
+    );
+    sourceText.focus();
+    return;
+  }
+
   const lang = getLanguageByCode(targetLang.value);
   syncMapToLanguage(lang);
 
@@ -156,7 +156,11 @@ async function handleTranslate() {
   setStatus("Translating…", "loading");
 
   try {
-    const result = await translateText(text, lang.code);
+    const result = await Translation.translateText(text, lang.code, (part, total) => {
+      if (total > 1) {
+        setStatus(`Translating… part ${part} of ${total}`, "loading");
+      }
+    });
     currentTranslation = result;
 
     translatedText.textContent = result;
@@ -208,6 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
       window.speechSynthesis.getVoices();
     };
   }
+
+  sourceText.setAttribute("maxlength", String(Translation.MAX_QUERY_CHARS));
+  updateCharCount();
 });
 
 targetLang.addEventListener("change", handleLanguageChange);
@@ -216,6 +223,7 @@ sendVoiceBtn.addEventListener("click", handleVoiceTranslate);
 speakBtn.addEventListener("click", handleSpeakClick);
 stopSpeakBtn.addEventListener("click", stopSpeaking);
 
+sourceText.addEventListener("input", updateCharCount);
 sourceText.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
     e.preventDefault();
