@@ -10,22 +10,16 @@ const recordBtn = document.getElementById("record-btn");
 const recordBtnLabel = document.getElementById("record-btn-label");
 const sendVoiceBtn = document.getElementById("send-voice-btn");
 const voicePreview = document.getElementById("voice-preview");
+const micLevelEl = document.getElementById("mic-level");
+const micLevelBar = document.getElementById("mic-level-bar");
 const mapTitle = document.getElementById("map-title");
 const mapSubtitle = document.getElementById("map-subtitle");
 const yearEl = document.getElementById("year");
-
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
 
 let map;
 let marker;
 let currentTranslation = "";
 let currentLanguage = getLanguageByCode("es");
-let recognition;
-let isRecording = false;
-let voiceTranscript = "";
-let voiceInterim = "";
-let lastRecognitionError = null;
 
 if (yearEl) {
   yearEl.textContent = new Date().getFullYear();
@@ -135,153 +129,8 @@ function stopSpeaking() {
   speakBtn.disabled = false;
 }
 
-function setRecordingUI(active) {
-  isRecording = active;
-  recordBtn.classList.toggle("is-recording", active);
-  recordBtn.setAttribute("aria-pressed", String(active));
-  recordBtnLabel.textContent = active ? "Stop" : "Record";
-  recordBtn.disabled = !SpeechRecognition;
-  translateBtn.disabled = active;
-  sendVoiceBtn.hidden = active || !voiceTranscript.trim();
-}
-
-function updateVoicePreview() {
-  const combined = `${voiceTranscript} ${voiceInterim}`.trim();
-  if (!combined) {
-    voicePreview.hidden = true;
-    voicePreview.textContent = "";
-    return;
-  }
-
-  voicePreview.hidden = false;
-  voicePreview.textContent = combined;
-}
-
-function initSpeechRecognition() {
-  if (!SpeechRecognition) {
-    recordBtn.disabled = true;
-    recordBtn.title = "Voice recording is not supported in this browser. Try Chrome or Safari.";
-    return;
-  }
-
-  if (!window.isSecureContext) {
-    recordBtn.disabled = true;
-    recordBtn.title = "Voice recording requires HTTPS or localhost.";
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.interimResults = true;
-  recognition.continuous = true;
-  recognition.maxAlternatives = 1;
-
-  recognition.onresult = (event) => {
-    let interim = "";
-    let final = "";
-
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const text = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        final += text;
-      } else {
-        interim += text;
-      }
-    }
-
-    if (final) {
-      voiceTranscript = `${voiceTranscript} ${final}`.trim();
-    }
-    voiceInterim = interim.trim();
-    updateVoicePreview();
-  };
-
-  recognition.onerror = (event) => {
-    const messages = {
-      "not-allowed":
-        "Microphone access was denied. Allow the mic in your browser settings and try again.",
-      "no-speech": "No speech was detected. Try speaking closer to your microphone.",
-      aborted: "",
-      network: "Speech recognition needs a network connection. Check your connection and try again.",
-    };
-
-    if (event.error !== "aborted") {
-      lastRecognitionError = event.error;
-      setStatus(messages[event.error] || "Could not recognize speech. Please try again.", "error");
-    }
-    stopRecording(false);
-  };
-
-  recognition.onend = () => {
-    if (isRecording) {
-      try {
-        recognition.start();
-      } catch {
-        stopRecording(false);
-      }
-      return;
-    }
-
-    if (lastRecognitionError) {
-      lastRecognitionError = null;
-      sendVoiceBtn.hidden = !voiceTranscript.trim();
-      return;
-    }
-
-    finishVoiceCapture();
-  };
-}
-
-function startRecording() {
-  if (!recognition || isRecording) return;
-
-  stopSpeaking();
-  lastRecognitionError = null;
-  voiceTranscript = "";
-  voiceInterim = "";
-  sendVoiceBtn.hidden = true;
-  updateVoicePreview();
-  setStatus("Listening… speak your sentence in English.", "loading");
-  setRecordingUI(true);
-
-  try {
-    recognition.start();
-  } catch {
-    setStatus("Could not start the microphone. Please try again.", "error");
-    setRecordingUI(false);
-  }
-}
-
-function stopRecording(shouldFinish = true) {
-  if (!recognition || !isRecording) return;
-
-  setRecordingUI(false);
-
-  try {
-    recognition.stop();
-  } catch {
-    if (shouldFinish) finishVoiceCapture();
-  }
-}
-
-function finishVoiceCapture() {
-  voiceInterim = "";
-  const text = voiceTranscript.trim();
-  updateVoicePreview();
-
-  if (!text) {
-    setStatus("No speech captured. Press Record and try again.", "error");
-    sendVoiceBtn.hidden = true;
-    return;
-  }
-
-  sourceText.value = text;
-  sendVoiceBtn.hidden = false;
-  setStatus("Recording captured. Press “Translate recording” or edit the text above.", "success");
-}
-
 async function handleVoiceTranslate() {
-  const text = voiceTranscript.trim() || sourceText.value.trim();
+  const text = VoiceInput.getTranscript();
   if (!text) {
     setStatus("Record something first, or type text to translate.", "error");
     return;
@@ -289,22 +138,6 @@ async function handleVoiceTranslate() {
 
   sourceText.value = text;
   await handleTranslate();
-}
-
-function handleRecordClick() {
-  if (!SpeechRecognition) {
-    setStatus(
-      "Voice recording is not supported in this browser. Use Chrome, Edge, or Safari.",
-      "error"
-    );
-    return;
-  }
-
-  if (isRecording) {
-    stopRecording(true);
-  } else {
-    startRecording();
-  }
 }
 
 async function handleTranslate() {
@@ -319,6 +152,7 @@ async function handleTranslate() {
   syncMapToLanguage(lang);
 
   translateBtn.disabled = true;
+  sendVoiceBtn.disabled = true;
   setStatus("Translating…", "loading");
 
   try {
@@ -335,6 +169,7 @@ async function handleTranslate() {
     resultBlock.hidden = true;
   } finally {
     translateBtn.disabled = false;
+    sendVoiceBtn.disabled = false;
   }
 }
 
@@ -353,7 +188,19 @@ populateLanguageSelect();
 
 document.addEventListener("DOMContentLoaded", () => {
   initMap();
-  initSpeechRecognition();
+
+  VoiceInput.init({
+    recordBtn,
+    recordBtnLabel,
+    sendVoiceBtn,
+    voicePreview,
+    sourceText,
+    translateBtn,
+    micLevelEl,
+    micLevelBar,
+    setStatus,
+    stopSpeaking,
+  });
 
   if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
@@ -365,7 +212,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 targetLang.addEventListener("change", handleLanguageChange);
 translateBtn.addEventListener("click", handleTranslate);
-recordBtn.addEventListener("click", handleRecordClick);
 sendVoiceBtn.addEventListener("click", handleVoiceTranslate);
 speakBtn.addEventListener("click", handleSpeakClick);
 stopSpeakBtn.addEventListener("click", stopSpeaking);

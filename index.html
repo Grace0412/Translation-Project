@@ -66,8 +66,15 @@
                 Translate recording
               </button>
             </div>
+            <div id="mic-level" class="mic-level" hidden aria-hidden="true">
+              <span class="mic-level-label">Mic level</span>
+              <div class="mic-level-track">
+                <div id="mic-level-bar" class="mic-level-bar"></div>
+              </div>
+            </div>
             <p id="record-hint" class="voice-hint">
-              Press Record, say your sentence, then press Stop. Review the text, then translate.
+              Press Record, wait for the mic bar to move, then speak clearly at a normal pace.
+              Press Stop when finished — your words appear below for review before translating.
             </p>
             <p id="voice-preview" class="voice-preview" hidden aria-live="polite"></p>
           </div>
@@ -143,6 +150,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/languages.js"></script>
+  <script src="js/voice.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
